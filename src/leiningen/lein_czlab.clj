@@ -37,13 +37,15 @@
   [proj]
   (let [dirs (:java-source-paths proj)
         out  (:compile-path proj)
-        root (or (:root-package proj)
-                 (:group proj))
         vs (str "version=" (:version proj))
+        co (remove empty?
+                   (cs/split (str (:coordinate! proj)) #"/"))
+        gid (first co)
+        cid (cs/join "/" (drop 1 co))
         ver (cs/join "/"
                      [out
-                      root
-                      (:name proj)
+                      (or gid (:group proj))
+                      (if (empty? cid) (:name proj) cid)
                       "version.properties"])]
     (cm/debug "ver file = " ver)
     (cm/debug "dirs = " dirs)
@@ -62,7 +64,9 @@
                  (.lastModified des))
           (.mkdirs (.getParentFile des))
           (io/copy r des))))
-    (spit (io/file ver) vs :encoding "utf-8")))
+    (let [v (io/file ver)]
+      (.mkdirs (.getParentFile v))
+      (spit v vs :encoding "utf-8"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;

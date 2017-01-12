@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defproject lein-czlab "0.1.0"
+(defproject lein-czlab "0.1.1"
 
   :description "(hooks) to extend leiningen's build process."
 
