@@ -7,7 +7,7 @@ This plugin is meant to be used on `czlab` projects.
 
 Include the plugin in the :plugins vector in project.clj:
 
-:plugins [[lein-czlab "0.1.0"]]
+:plugins [[lein-czlab "0.1.1"]]
 
 To activate the hooks:
 

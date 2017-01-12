@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn lein-czlab
-  "I don't do a lot right now"
+  "For czlab's internal use only"
   [project & args])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -45,7 +45,8 @@
         ver (cs/join "/"
                      [out
                       (or gid (:group proj))
-                      (if (empty? cid) (:name proj) cid)
+                      (if (empty? cid)
+                        (:name proj) cid)
                       "version.properties"])]
     (cm/debug "ver file = " ver)
     (cm/debug "dirs = " dirs)
