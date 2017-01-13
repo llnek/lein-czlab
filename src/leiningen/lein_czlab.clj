@@ -11,6 +11,8 @@
   (:require [leiningen.core.utils :as cu]
             [leiningen.core.main :as cm]
             [leiningen.javac :as lj]
+            [leiningen.test :as lt]
+            [clojure.pprint :as pp]
             [clojure.java.io :as io]
             [clojure.string :as cs]
             [robert.hooke :as h])
