@@ -8,7 +8,8 @@
 
 (ns leiningen.lein-czlab
 
-  (:require [leiningen.core.utils :as cu]
+  (:require [leiningen.core.classpath :as cp]
+            [leiningen.core.utils :as cu]
             [leiningen.core.main :as cm]
             [leiningen.javac :as lj]
             [leiningen.test :as lt]
@@ -23,7 +24,22 @@
 ;;
 (defn lein-czlab
   "For czlab's internal use only"
-  [project & args])
+  [project & args]
+
+  (let
+    [out (:compile-path project)]
+    (when-some [cmd (first args)]
+      (cond
+        (= "deps" cmd)
+        (let [jars (filter #(.endsWith (str %) ".jar")
+                           (cp/get-classpath project))]
+          (.mkdirs (io/file out))
+          (doseq [j jars
+                  :let [fj (io/file j)
+                        n (.getName fj)
+                        t (io/file out n)]]
+            (println "dep-jar = " t)
+            (io/copy (io/file j) t)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
