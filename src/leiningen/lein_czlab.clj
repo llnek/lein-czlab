@@ -24,6 +24,30 @@
 
   (:import [java.io File]))
 
+(defn- copyDir
+  ""
+  [src des]
+
+  (doseq [f (file-seq src)
+          :let [n (.getName f)]]
+    ))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(defn- xxx
+  ""
+  [project]
+
+  (let
+    [top (:root project)
+     des (io/file top "pkg")
+     dirs ["conf" "etc" "src" "doc" "public"]]
+    (.mkdir des)
+    (doseq [d dirs
+            :let [src (io/file top d)]]
+      (copyDir src (io/file des d)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 (defn lein-czlab
