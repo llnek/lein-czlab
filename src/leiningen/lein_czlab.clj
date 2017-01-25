@@ -10,12 +10,16 @@
 
   (:require [leiningen.core.classpath :as cp]
             [leiningen.core.utils :as cu]
+            [leiningen.core.project :as pj]
             [leiningen.core.main :as cm]
+            [leiningen.jar :as jar]
+            [leiningen.pom :as pom]
             [leiningen.javac :as lj]
             [leiningen.test :as lt]
             [clojure.pprint :as pp]
             [clojure.java.io :as io]
             [clojure.string :as cs]
+            [clojure.set :as set]
             [robert.hooke :as h])
 
   (:import [java.io File]))
@@ -25,21 +29,38 @@
 (defn lein-czlab
   "For czlab's internal use only"
   [project & args]
-
   (let
-    [out (:compile-path project)]
-    (when-some [cmd (first args)]
-      (cond
-        (= "deps" cmd)
-        (let [jars (filter #(.endsWith (str %) ".jar")
-                           (cp/get-classpath project))]
-          (.mkdirs (io/file out))
-          (doseq [j jars
-                  :let [fj (io/file j)
-                        n (.getName fj)
-                        t (io/file out n)]]
-            (println "dep-jar = " t)
-            (io/copy (io/file j) t)))))))
+    [scoped (set (pj/pom-scope-profiles project :provided))
+     dft (set (pj/expand-profile project :default))
+     provided (remove
+                (set/difference dft scoped)
+                (-> project meta :included-profiles))
+     project (pj/merge-profiles
+               (pj/merge-profiles project
+                                  [:uberjar]) provided)
+     ;;_ (pom/check-for-snapshot-deps project)
+     project (update-in project
+                        [:jar-inclusions]
+                        concat
+                        (:uberjar-inclusions project))
+     [_ jar] (first (jar/jar project nil))]
+    (let
+      [whites (select-keys project pj/whitelist-keys)
+       project (-> (pj/unmerge-profiles project [:default])
+                   (merge whites))
+       deps (->> (cp/resolve-managed-dependencies
+                   :dependencies
+                   :managed-dependencies project)
+                 (filter #(.endsWith (.getName %) ".jar")))
+       jars (cons (io/file jar) deps)
+       pkg (io/file (:root project) "pkg")
+       lib (io/file pkg "lib")]
+      (.mkdirs lib)
+      (doseq [fj jars
+              :let [n (.getName fj)
+                    t (io/file lib n)]]
+        (println "dep-jar = " t)
+        (io/copy fj t)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
