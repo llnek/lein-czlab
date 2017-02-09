@@ -26,22 +26,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn lein-czlab
-  "For czlab's internal use only"
-  [project & args])
+(defn lein-czlab "For czlab's internal use only" [project & args])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn- notCode?
-  [^File f]
+(defn- notCode? "" [^File f]
+
   (not (or (.endsWith (.getName f) ".java")
            (.endsWith (.getName f) ".clj"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn- cpyRes
-  ""
-  [proj]
+(defn- cpyRes "" [proj]
+
   (let [dirs (:java-source-paths proj)
         out  (:compile-path proj)
         vs (str "version=" (:version proj))
@@ -78,21 +75,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn hookJavac
-  ""
-  [task & args]
+(defn hookJavac "" [task & args]
+
   (apply task args)
   (try
     (cpyRes (first args))
-    (catch Throwable t
-      (cu/error t))))
+    (catch Throwable t (cu/error t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn activate
-  ""
-  []
-  (h/add-hook #'lj/javac #'hookJavac))
+(defn activate "" [] (h/add-hook #'lj/javac #'hookJavac))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;EOF
