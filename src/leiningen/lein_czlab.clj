@@ -22,11 +22,57 @@
             [clojure.set :as set]
             [robert.hooke :as h])
 
-  (:import [java.io File]))
+  (:import [java.io File]
+           [org.apache.commons.io FileUtils]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn lein-czlab "For czlab's internal use only" [project & args])
+(defn- packLib "" [project toDir]
+
+  (let
+    [scoped (set (pj/pom-scope-profiles project :provided))
+     dft (set (pj/expand-profile project :default))
+     provided (remove
+                (set/difference dft scoped)
+                (-> project meta :included-profiles))
+     project (pj/merge-profiles
+               (pj/merge-profiles project
+                                  [:uberjar]) provided)
+     ;;_ (pom/check-for-snapshot-deps project)
+     project (update-in project
+                        [:jar-inclusions]
+                        concat
+                        (:uberjar-inclusions project))
+     [_ jar] (first (jar/jar project nil))]
+    (let
+      [whites (select-keys project pj/whitelist-keys)
+       project (-> (pj/unmerge-profiles project [:default])
+                   (merge whites))
+       deps (->> (cp/resolve-managed-dependencies
+                   :dependencies
+                   :managed-dependencies project)
+                 (filter #(.endsWith (.getName ^File %) ".jar")))
+       jars (cons (io/file jar) deps)
+       lib (io/file toDir "lib")]
+      (.mkdirs lib)
+      (FileUtils/cleanDirectory lib)
+      (doseq [fj jars
+              :let [n (.getName ^File fj)
+                    t (io/file lib n)]]
+        ;;(println "dep-jar = " t)
+        (io/copy fj t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+(defn lein-czlab "For czlab's internal use only" [project & args]
+
+  (let
+    [dir (second (drop-while
+                   #(not= "--to-dir" %) args))
+     dir (or dir
+             (io/file (:root project)))
+     dir (io/file dir)]
+    (packLib project dir)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
