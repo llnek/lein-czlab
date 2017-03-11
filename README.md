@@ -3,7 +3,7 @@
 A Leiningen plugin (hooks) to extend leiningen's build process.
 This plugin is meant to be used on `czlab` projects.
 
-[![Build Status](https://travis-ci.org/llnek/lein-czlab?branch=master)](https://travis-ci.org/llnek/lein-czlab)
+[![Build Status](https://travis-ci.org/llnek/lein-czlab.svg?branch=master)](https://travis-ci.org/llnek/lein-czlab)
 
 ## Installation
 
