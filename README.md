@@ -19,7 +19,7 @@ Add the following dependency to your `project.clj` file:
 
 Include the plugin in the :plugins vector in project.clj:
 
-:plugins [[lein-czlab "0.1.1"]]
+:plugins [[lein-czlab "1.0.0"]]
 
 To activate the hooks:
 
