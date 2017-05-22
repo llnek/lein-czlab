@@ -64,7 +64,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn lein-czlab "For czlab's internal use only" [project & args]
+(defn lein-czlab "For czlab's internal use only:
+                 copies all dependent jars to out/lib" [project & args]
 
   (let
     [dir (second (drop-while
@@ -121,7 +122,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn hookJavac "" [task & args]
+(defn hookJavac "The hook: run the javac task then copy all
+                non code resources to out-dir" [task & args]
 
   (apply task args)
   (try
@@ -130,7 +132,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defn activate "" [] (h/add-hook #'lj/javac #'hookJavac))
+(defn activate "Activate the hook" [] (h/add-hook #'lj/javac #'hookJavac))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;EOF
