@@ -12,6 +12,7 @@
 
   :dependencies [[commons-io/commons-io "2.5"]]
 
+
   :global-vars {*warn-on-reflection* true}
   :target-path "out/%s"
   :eval-in-leiningen true)

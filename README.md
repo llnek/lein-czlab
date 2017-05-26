@@ -25,7 +25,6 @@ To activate the hooks:
 
 :hooks [leiningen.lein-czlab]
 
-
 ## Contacting me / contributions
 
 Please use the project's [GitHub issues page] for all questions, ideas, etc. **Pull requests welcome**. See the project's [GitHub contributors page] for a list of contributors.
