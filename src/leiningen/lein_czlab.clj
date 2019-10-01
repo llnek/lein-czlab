@@ -26,8 +26,36 @@
              [string :as cs]]
             [robert.hooke :as h])
 
-  (:import [java.io File]
-           [org.apache.commons.io FileUtils]))
+  (:import [java.io
+            File
+            IOException]
+           [java.nio.file
+            Files
+            Path
+            Paths
+            FileVisitResult
+            SimpleFileVisitor]
+           [java.nio.file.attribute BasicFileAttributes]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn- clean-dir
+
+  "Clena out recursively a directory with native Java.
+  https://docs.oracle.com/javase/tutorial/essential/io/walk.html"
+  [dir]
+
+  (let [root (io/file dir)]
+    (->> (proxy [SimpleFileVisitor][]
+           (visitFile [^Path file
+                       ^BasicFileAttributes attrs]
+             (Files/delete file)
+             FileVisitResult/CONTINUE)
+           (postVisitDirectory [^Path dir
+                                ^IOException ex]
+             (if (not= dir root)
+               (Files/delete dir))
+             FileVisitResult/CONTINUE))
+         (Files/walkFileTree (Paths/get (.toURI root))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn- pack-lib
@@ -55,7 +83,7 @@
         jars (cons (io/file jar) deps)
         lib (io/file toDir "lib")]
     (.mkdirs lib)
-    (FileUtils/cleanDirectory lib)
+    (clean-dir lib)
     (doseq [fj jars
             :let [n (.getName ^File fj)
                   t (io/file lib n)]] (io/copy fj t))))

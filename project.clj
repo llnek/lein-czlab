@@ -1,6 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-(defproject lein-czlab "1.0.0"
+(defproject lein-czlab "1.1.0"
 
   :description "Hook: extend the build process by copying non-source-code
                resources to out.
@@ -10,8 +10,7 @@
             :name "Eclipse Public License"}
   :url "https://github.com/llnek/lein-czlab"
 
-  :dependencies [[commons-io/commons-io "2.5"]]
-
+  :dependencies []
 
   :global-vars {*warn-on-reflection* true}
   :target-path "out/%s"
